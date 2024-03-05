@@ -88,35 +88,57 @@ def xor_decrypt(ciphertext, key, block_size):
 
 
 
+def main():
+    st.title("Block Cipher - XOR Encryption")
+
+    plaintext = st.text_input("Plaintext:")
+    key = st.text_input("Key:")
+    block_size = st.text_input("Block Size:")
+    submit_button = st.button("Submit")
+
+    if submit_button:
+        if block_size:
+            block_size = int(block_size)
+            if block_size not in [8, 16, 32, 64, 128]:
+                st.divider()
+                st.error("Block size must be one of 8, 16, 32, 64, or 128 bytes")
+                return
+
+        if plaintext and key and block_size:
+            key = pad(bytes(key.encode()), block_size)
+            # key = pad(key, block_size)
+            ciphertext = xor_encrypt(bytes(plaintext.encode()), key, block_size)
+            # ciphertext = xor_encrypt(plaintext, key, block_size)
+            decrypted_data = xor_decrypt(ciphertext, key, block_size)
+
+            st.divider()
+            st.subheader("Encrypted blocks")
+            for x, i in enumerate(range(0, len(ciphertext), block_size)):
+                # ciphertext_block = ciphertext[i:i+block_size]
+                decrypted_block = decrypted_data[i:i+block_size]
+                # st.write(f"Plain  block[{x}]: {ciphertext_block.hex()} : {ciphertext_block}")
+                st.write(f"Plain \t\tblock[{x}]: {decrypted_block.hex()} : {decrypted_block}")
+                # decrypted_block = decrypted_data[i:i+block_size]
+                ciphertext_block = ciphertext[i:i+block_size]
+                encrypted_str = ''.join([f"`{chr(b)}`" for b in ciphertext_block])
+                # st.write(f"Cipher block[{x}]: {decrypted_block.hex()} : {decrypted_block}")
+                st.write(f"Cipher block[{x}]: {ciphertext_block.hex()} : {ciphertext_block}")
+
+            st.subheader("Decrypted blocks")
+            for x, i in enumerate(range(0, len(decrypted_data), block_size)):
+                decrypted_block = decrypted_data[i:i+block_size]
+                st.write(f"block[{x}]: {decrypted_block.hex()}: {decrypted_block}")
+
+            st.write("\t")
+            st.write("\nOriginal plaintext:", decrypted_data)
+            st.write("Key byte      :", key)
+            st.write("Key hex       :", key.hex())
+            st.write("Encrypted data:", ciphertext.hex())
+            st.write(f"Decrypted data: {decrypted_data.hex()}")
+            st.write("Decrypted data:", decrypted_data)
+
 if __name__ == "__main__":
-    # Define the plaintext and encryption key
-    plaintext = bytes(input().encode())
-    key = bytes(input().encode())
-    # Define the block size for encryption (adjust according to your needs
-    block_size = int(input())
-    
-    
-    
-    if block_size not in [8, 16, 32, 64, 128]:
-        
-        st.write("Block size must be one of 8, 16,  32, 64, or   128 bytes")
-    # Encryption
-    else:
-        key = pad(key, block_size)
-        ciphertext = xor_encrypt(plaintext, key, block_size)
-        decrypted_data = xor_decrypt(ciphertext, key, block_size)
-    
+    main()
 
-    # Decryption
-    
-        st.write("\nOriginal plaintext:", decrypted_data)
-        st.write("Key byte      :", key)
-        st.write("Key hex       :", key.hex())
-        st.write("Encrypted data:", ciphertext.hex())  # st.write encrypted data in hexadecimal format
-        st.write("Decrypted data:", decrypted_data.hex())  # st.write encrypted data in hexadecimal format
-        st.write("Decrypted data:", decrypted_data)
-
-
-
-# st.write(b'Hello Bob, this '.hex())
-
+st.divider()
+st.snow()
